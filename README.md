@@ -1,6 +1,6 @@
 # Name Tags + Advanced Portraits v2.0
 
-A Pokemon Essentials plugin addon that adds portrait and name tag functionality to message windows.
+An addon for Swdfm's MM plugin that adds portrait and name tag functionality to message windows.
 
 ## Requirements
 - Swdfm's Modular Messages plugin
