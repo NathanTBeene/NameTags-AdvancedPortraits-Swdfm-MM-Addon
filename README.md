@@ -14,5 +14,6 @@ An addon for Swdfm's MM plugin that adds portrait and name tag functionality to 
 - **Portraits**: Show character images on left/right sides with animations
 - **Dual Portraits**: Display two portraits simultaneously
 - **Auto-flipping**: Automatically flip portraits based on position
+- **Silhouettes**: You can create a silhouette of a photo with the "_b" command. 
 - **Animation**: Smooth sliding animations for portrait changes
 - **Caching**: Optimized bitmap caching for better performance
