@@ -39,6 +39,9 @@
 # \plr[left,right]          -> Dual portraits with specified files.
 # \plr                      -> Dual portraits with previous files.
 
+# PORTRAIT RESET
+# \xpend                    -> Reset portrait system for fresh conversations.
+
 #───────────────────────────────────────────────────────────────────────────────
 # FILE LOCATIONS & FEATURES
 #───────────────────────────────────────────────────────────────────────────────
@@ -497,6 +500,18 @@ def pbAdjustPortrait(param, is_right = false)
 end
 
 #-------------------------------
+# Reset portrait tracking for fresh conversations
+def pbResetPortraitTracking
+    $game_temp.current_portrait_left = nil
+    $game_temp.current_portrait_right = nil
+    $game_temp.last_portrait_side = nil
+    $game_temp.portraits_cleared_by_side_switch = {}
+    $game_temp.name_tag = nil
+    $game_temp.port_path_left = nil
+    $game_temp.port_path_right = nil
+end
+
+#-------------------------------
 # Helper methods for reducing code duplication
 module PortraitHelpers
     # Create a name tag window
@@ -794,6 +809,13 @@ Modular_Messages::Controls.add("plr", PortraitHelpers.create_control_handler(
         
         PortraitHelpers.create_dual_portraits(hash, left_portrait, right_portrait, false)
     }
+))
+
+#-------------------------------
+# Control Handler: Reset Portrait System
+Modular_Messages::Controls.add("xpend", PortraitHelpers.create_control_handler(
+    proc { |hash, param| pbResetPortraitTracking },
+    proc { |hash, param| pbResetPortraitTracking }
 ))
 
 #-------------------------------
