@@ -129,7 +129,7 @@ module Gela_Settings
 # Automatic portrait flipping based on side.
 # Options: :left (always flip left portraits), :right (always flip right portraits),
 #          :both (flip both sides), or nil (no auto-flip)
-    AUTO_FLIP_SIDE = :nil
+    AUTO_FLIP_SIDE = nil
 
 #----- PORTRAIT ANIMATION SETTINGS ---------------------------------------------
 
@@ -220,7 +220,7 @@ class FaceWindowVX < SpriteWindow_Base
         
         # Check if filename ends with _f for horizontal flip
         filename = faceinfo[0]
-        @flip_horizontal = filename.end_with?("_f")
+        @flip_horizontal = filename && filename.end_with?("_f")
         if @flip_horizontal
             filename = filename[0...-2]  # Remove the _f suffix
         end
@@ -238,9 +238,23 @@ class FaceWindowVX < SpriteWindow_Base
             end
         end
         
+        # Handle nil or empty filename
+        if filename.nil? || filename.empty?
+            # Create a blank bitmap and return early
+            self.contents = Bitmap.new(@sizes[2], @sizes[3])
+            return
+        end
+        
         facefile = pbResolveBitmap("Graphics/Faces/" + filename)
         facefile ||= pbResolveBitmap("Graphics/Pictures/" + filename)
         facefile ||= pbResolveBitmap("Graphics/Trainers/" + filename)
+        
+        # Handle case where bitmap file is not found
+        if facefile.nil?
+            # Create a blank bitmap and return early
+            self.contents = Bitmap.new(@sizes[2], @sizes[3])
+            return
+        end
         
         self.contents&.dispose
         
@@ -530,6 +544,12 @@ module PortraitHelpers
         is_right = direction == :right
         
         param = pbAdjustPortrait(param, is_right)
+        
+        # Skip if parameter is empty or nil
+        if param.nil? || param.empty?
+            return
+        end
+        
         window_key = "windows_face_#{direction_str}"
         
         # Check if this portrait is already displayed on this side
@@ -648,28 +668,39 @@ module PortraitHelpers
         
         # Handle left portrait with preserved animation decision
         hash["windows_face_left"]&.dispose
-        hash["windows_face_left"] = FaceWindowVXNew.new(left_portrait, :left)
-        $game_temp.current_portrait_left = left_portrait
-        
-        # Calculate left position
-        gap = Gela_Settings::PORTRAIT_GAP_EDGE
-        left_target_x = gap + Gela_Settings::PORTRAIT_OFFSET_LEFT_X
-        hash["windows_face_left"].y = hash["msg_window"].y - hash["windows_face_left"].height - Gela_Settings::PORTRAIT_GAP_HEIGHT + Gela_Settings::PORTRAIT_OFFSET_LEFT_Y
-        hash["windows_face_left"].viewport = hash["msg_window"].viewport
-        hash["windows_face_left"].z = hash["msg_window"].z - 10
-        hash["windows_face_left"].start_slide_animation(left_target_x, animate && left_changed)
+        if left_portrait && !left_portrait.empty?
+            hash["windows_face_left"] = FaceWindowVXNew.new(left_portrait, :left)
+            $game_temp.current_portrait_left = left_portrait
+            
+            # Calculate left position
+            gap = Gela_Settings::PORTRAIT_GAP_EDGE
+            left_target_x = gap + Gela_Settings::PORTRAIT_OFFSET_LEFT_X
+            hash["windows_face_left"].y = hash["msg_window"].y - hash["windows_face_left"].height - Gela_Settings::PORTRAIT_GAP_HEIGHT + Gela_Settings::PORTRAIT_OFFSET_LEFT_Y
+            hash["windows_face_left"].viewport = hash["msg_window"].viewport
+            hash["windows_face_left"].z = hash["msg_window"].z - 10
+            hash["windows_face_left"].start_slide_animation(left_target_x, animate && left_changed)
+        else
+            hash["windows_face_left"] = nil
+            $game_temp.current_portrait_left = nil
+        end
         
         # Handle right portrait with preserved animation decision  
         hash["windows_face_right"]&.dispose
-        hash["windows_face_right"] = FaceWindowVXNew.new(right_portrait, :right)
-        $game_temp.current_portrait_right = right_portrait
-        
-        # Calculate right position
-        right_target_x = Graphics.width - hash["windows_face_right"].width - gap + Gela_Settings::PORTRAIT_OFFSET_RIGHT_X
-        hash["windows_face_right"].y = hash["msg_window"].y - hash["windows_face_right"].height - Gela_Settings::PORTRAIT_GAP_HEIGHT + Gela_Settings::PORTRAIT_OFFSET_RIGHT_Y
-        hash["windows_face_right"].viewport = hash["msg_window"].viewport
-        hash["windows_face_right"].z = hash["msg_window"].z - 10
-        hash["windows_face_right"].start_slide_animation(right_target_x, animate && right_changed)
+        if right_portrait && !right_portrait.empty?
+            hash["windows_face_right"] = FaceWindowVXNew.new(right_portrait, :right)
+            $game_temp.current_portrait_right = right_portrait
+            
+            # Calculate right position
+            gap = Gela_Settings::PORTRAIT_GAP_EDGE
+            right_target_x = Graphics.width - hash["windows_face_right"].width - gap + Gela_Settings::PORTRAIT_OFFSET_RIGHT_X
+            hash["windows_face_right"].y = hash["msg_window"].y - hash["windows_face_right"].height - Gela_Settings::PORTRAIT_GAP_HEIGHT + Gela_Settings::PORTRAIT_OFFSET_RIGHT_Y
+            hash["windows_face_right"].viewport = hash["msg_window"].viewport
+            hash["windows_face_right"].z = hash["msg_window"].z - 10
+            hash["windows_face_right"].start_slide_animation(right_target_x, animate && right_changed)
+        else
+            hash["windows_face_right"] = nil
+            $game_temp.current_portrait_right = nil
+        end
         
         # If either side is animating, run a collective animation loop
         if (animate && left_changed) || (animate && right_changed)
@@ -688,6 +719,8 @@ module PortraitHelpers
     
     # Parse combined parameters (name, filename)
     def self.parse_combined_params(param)
+        return ["", ""] if param.nil? || param.empty?
+        
         parts = param.split(",")
         if parts.length >= 2
             name = parts[0].strip
@@ -696,13 +729,15 @@ module PortraitHelpers
             name = param.strip
             filename = param.strip
             # Remove _f from name for display purposes
-            name = name[0...-2] if name.end_with?("_f")
+            name = name[0...-2] if name && name.end_with?("_f")
         end
         [name, filename]
     end
     
     # Parse dual portrait parameters
     def self.parse_dual_params(param)
+        return ["", ""] if param.nil? || param.empty?
+        
         parts = param.split(",")
         if parts.length >= 2
             [parts[0].strip, parts[1].strip]
