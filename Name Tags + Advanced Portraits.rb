@@ -7,7 +7,7 @@
 # Updated by Aten2049 for v2.0
 
 # REQUIREMENTS
-# - Swdfm's modular messages plugin (Should come with this.)
+# - Swdfm's modular messages plugin (Should be linked in the Eevee Expo post.)
 # - Ensure that the FaceWindowVX is not used in any other scripts
 #   or that it is compatible with this script.
 
