@@ -79,8 +79,8 @@ module Gela_Settings
 #----- NAME TAG SETTINGS -------------------------------------------------------
 
 # Name tag window position offset (pixels)
-    OFFSET_NAME_X = 20          # Horizontal shift from default position
-    OFFSET_NAME_Y = 15           # Vertical shift from default position
+    OFFSET_NAME_X = 0          # Horizontal shift from default position
+    OFFSET_NAME_Y = 0           # Vertical shift from default position
 
 # Name tag text alignment
 # Options: :left (0), :center/:centre (1), :right (2)
@@ -88,7 +88,7 @@ module Gela_Settings
 
 # Name tag windowskin files (Graphics/Windowskins/)
 # Set to nil to use default windowskin
-    DEFAULT_WINDOWSKIN = "nameplate1"   # "nmbx"
+    DEFAULT_WINDOWSKIN = nil   # "nmbx"
     DEFAULT_WINDOWSKIN_DARK = nil       # "xndark"
 
 # Minimum width for name tag window (pixels)
@@ -100,12 +100,12 @@ module Gela_Settings
     PORTRAIT_GAP_EDGE = 16
     
 # Additional offset for left portraits (px)
-    PORTRAIT_OFFSET_LEFT_X = -130
-    PORTRAIT_OFFSET_LEFT_Y = 200
+    PORTRAIT_OFFSET_LEFT_X = 0
+    PORTRAIT_OFFSET_LEFT_Y = 0
     
 # Additional offset for right portraits (px)
-    PORTRAIT_OFFSET_RIGHT_X = 162
-    PORTRAIT_OFFSET_RIGHT_Y = 200
+    PORTRAIT_OFFSET_RIGHT_X = 0
+    PORTRAIT_OFFSET_RIGHT_Y = 0
     
 # The gap (px) between the top of the messagebox and
     PORTRAIT_GAP_HEIGHT = 0
@@ -118,7 +118,7 @@ module Gela_Settings
 
 # Global scale for all portrait dimensions.
 # Set to 1 for default size, 2 for double size, etc.
-    PORTRAIT_SCALE = 2
+    PORTRAIT_SCALE = 1
 
 # Whether to show windowskin border for portraits
     SHOW_PORTRAIT_WINDOWSKIN = false
@@ -126,7 +126,7 @@ module Gela_Settings
 # Automatic portrait flipping based on side.
 # Options: :left (always flip left portraits), :right (always flip right portraits),
 #          :both (flip both sides), or nil (no auto-flip)
-    AUTO_FLIP_SIDE = :left
+    AUTO_FLIP_SIDE = :nil
 
 #----- PORTRAIT ANIMATION SETTINGS ---------------------------------------------
 
@@ -134,7 +134,7 @@ module Gela_Settings
     PORTRAIT_SLIDE_ANIMATION = true
 
 # Animation timing (in frames, 60 FPS = 1 second)
-    PORTRAIT_SLIDE_DURATION = 30
+    PORTRAIT_SLIDE_DURATION = 60
 
 # Slide distance for portrait animations (in pixels)
 # This is the distance the portrait will slide in or out during the animation.
