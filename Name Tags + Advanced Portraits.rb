@@ -55,6 +55,10 @@
 #    • Manual: Append "_f" to the filename (e.g., \ml[portrait_f]).
 #    • Automatic: Set Gela_Settings::AUTO_FLIP_SIDE to :left, :right, or :both.
 
+# PORTRAIT SILHOUETTE
+#    • Append "_b" to the filename for a black silhouette (e.g., \ml[portrait_b]).
+#    • Append "_bf" or "_fb" for both flip and black silhouette (e.g., \ml[portrait_bf]).
+
 # ANIMATIONS
 #    • Smooth sliding animations when portraits change.
 #    • Configurable animation duration and distance.
@@ -218,11 +222,26 @@ class FaceWindowVX < SpriteWindow_Base
         
         faceinfo = face.split(",")
         
-        # Check if filename ends with _f for horizontal flip
+        # Check for special filename suffixes
         filename = faceinfo[0]
-        @flip_horizontal = filename && filename.end_with?("_f")
-        if @flip_horizontal
-            filename = filename[0...-2]  # Remove the _f suffix
+        @flip_horizontal = false
+        @black_silhouette = false
+        
+        if filename
+            # Check for _f (flip) suffix
+            if filename.end_with?("_f")
+                @flip_horizontal = true
+                filename = filename[0...-2]  # Remove the _f suffix
+            # Check for _b (black silhouette) suffix
+            elsif filename.end_with?("_b")
+                @black_silhouette = true
+                filename = filename[0...-2]  # Remove the _b suffix
+            # Check for combined _bf or _fb (both flip and black silhouette)
+            elsif filename.end_with?("_bf") || filename.end_with?("_fb")
+                @flip_horizontal = true
+                @black_silhouette = true
+                filename = filename[0...-3]  # Remove the _bf or _fb suffix
+            end
         end
         
         # Apply auto-flip based on side setting
@@ -262,7 +281,7 @@ class FaceWindowVX < SpriteWindow_Base
         @facebitmaptmp = AnimatedBitmap.new(facefile)
         
         # Create cache key for this specific portrait configuration
-        cache_key = "#{filename}_#{@faceIndex}_#{@sizes.join('_')}_#{@flip_horizontal}"
+        cache_key = "#{filename}_#{@faceIndex}_#{@sizes.join('_')}_#{@flip_horizontal}_#{@black_silhouette}"
         
         # Use cached bitmap if available, otherwise create and cache it
         @facebitmap = PortraitCache.get_cached_bitmap(cache_key, @sizes) do
@@ -314,6 +333,19 @@ class FaceWindowVX < SpriteWindow_Base
                 @facebitmaptmp.bitmap,
                 Rect.new(src_x, src_y, src_width, src_height)
             )
+        end
+        
+        # Apply black silhouette effect if requested
+        if @black_silhouette
+            (0...result_bitmap.width).each do |x|
+                (0...result_bitmap.height).each do |y|
+                    color = result_bitmap.get_pixel(x, y)
+                    # If pixel is not transparent, make it black
+                    if color.alpha > 0
+                        result_bitmap.set_pixel(x, y, Color.new(0, 0, 0, color.alpha))
+                    end
+                end
+            end
         end
         
         result_bitmap
@@ -370,6 +402,19 @@ class FaceWindowVX < SpriteWindow_Base
                         @facebitmaptmp.bitmap,
                         Rect.new(src_x, src_y, src_width, src_height)
                     )
+                end
+                
+                # Apply black silhouette effect if requested
+                if @black_silhouette
+                    (0...@facebitmap.width).each do |x|
+                        (0...@facebitmap.height).each do |y|
+                            color = @facebitmap.get_pixel(x, y)
+                            # If pixel is not transparent, make it black
+                            if color.alpha > 0
+                                @facebitmap.set_pixel(x, y, Color.new(0, 0, 0, color.alpha))
+                            end
+                        end
+                    end
                 end
             end
         end
@@ -728,8 +773,12 @@ module PortraitHelpers
         else
             name = param.strip
             filename = param.strip
-            # Remove _f from name for display purposes
-            name = name[0...-2] if name && name.end_with?("_f")
+            # Remove suffixes from name for display purposes
+            if name && (name.end_with?("_f") || name.end_with?("_b"))
+                name = name[0...-2]
+            elsif name && (name.end_with?("_bf") || name.end_with?("_fb"))
+                name = name[0...-3]
+            end
         end
         [name, filename]
     end
