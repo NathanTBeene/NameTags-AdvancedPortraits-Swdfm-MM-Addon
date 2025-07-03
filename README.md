@@ -3,10 +3,10 @@
 An addon for Swdfm's MM plugin that adds portrait and name tag functionality to message windows.
 
 ## Requirements
-- Swdfm's Modular Messages plugin
+- [Swdfm's Modular Messages plugin](https://eeveeexpo.com/resources/1591/)
 
 ## How to Install
-1. Install Modular Messages plugin.
+1. Install [Modular Messages](https://eeveeexpo.com/resources/1591/) plugin.
 2. Place this file inside of the `Modular Messages/ Add Ons` folder.
 
 ## Features
