@@ -5,6 +5,10 @@ An addon for Swdfm's MM plugin that adds portrait and name tag functionality to 
 ## Requirements
 - Swdfm's Modular Messages plugin
 
+## How to Install
+1. Install Modular Messages plugin.
+2. Place this file inside of the `Modular Messages/ Add Ons` folder.
+
 ## Features
 - **Name Tags**: Display character names above message windows
 - **Portraits**: Show character images on left/right sides with animations
